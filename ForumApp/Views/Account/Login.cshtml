@@ -1,0 +1,61 @@
+﻿@using System.Linq
+@model ShopProject.Models.AccountViewModels.LoginViewModel
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<link href="~/css/User.css" rel="stylesheet" />
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Tabs Titles -->
+        <!-- Icon -->
+        <div class="fadeIn first">
+            <h1>Log in</h1>
+        </div>
+        <!-- Login Form -->
+        <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="Email" type="text" id="login" class="fadeIn second" placeholder="Username"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="Password" type="password" id="password" class="fadeIn third" placeholder="Password"/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label asp-for="RememberMe">
+                        <input asp-for="RememberMe" />
+                        @Html.DisplayNameFor(m => m.RememberMe)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="fadeIn fourth" value="Log in" />
+            </div>
+            <div class="form-group">
+                <p>
+                    <a asp-action="ForgotPassword">Forgot your password?</a>
+                </p>
+                <p>
+                    <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a>
+                </p>
+            </div>
+        </form>
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+            <a asp-controller="Home" asp-action="Index" class="underlineHover">Go to the Site</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

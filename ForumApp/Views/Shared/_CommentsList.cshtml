@@ -1,0 +1,47 @@
+﻿@using ForumApp.Models.User
+@model IEnumerable<Comment>
+
+<table class="table">
+    @if (Model.Count() != 0)
+    {
+        <thead>
+        <tr>
+            <th>
+                @if (Model.Count() == 1)
+                {
+                    <p>@Model.Count() comment</p>
+                }
+                else
+                {
+                    <p>@Model.Count() comments</p>
+                }
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var comment in Model.Reverse().Take(6))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => comment.Author.FirstName) @Html.DisplayFor(modelItem => comment.Author.LastName)
+                </td>
+                <td class="col-sm-7">
+                    @Html.DisplayFor(modelItem => comment.Description)
+                </td>
+                <td>
+                    @if (comment.Author.UserName == User.Identity.Name ||
+                         comment.AuthorIdFromCreated == User.Identity.Name)
+                    {
+                        <a asp-controller="PostComment" asp-action="Edit" asp-route-id="@comment.Id" class="btn btn-warning">Edit</a>
+                        <a asp-controller="PostComment" asp-action="Delete" asp-route-id="@comment.Id" class="btn btn-danger">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    }
+    else
+    {
+        <h6>no comments</h6>
+    }
+</table>

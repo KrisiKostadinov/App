@@ -1,0 +1,119 @@
+﻿@using ForumApp.Models.User
+@model ApplicationUser
+@{
+    ApplicationUser user = (ApplicationUser)ViewData["User"];
+    ViewData["Title"] = "Index";
+    Category category = new Category();
+    List<Category> categories = (List<Category>)ViewData["Categories"];
+    Post newPost = new Post();
+    List<Comment> showComments = new List<Comment>();
+}
+<div class="form-group">
+    <h4 class="text-center">@user.FirstName @user.LastName</h4>
+    <div class="btn-group pull-right">
+        <a href="#" class="btn btn-success btn-sm">Settings</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h4 class="">Search</h4>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
+                <div class="input-group-btn">
+                    <button class="btn btn-success" type="submit">
+                        <i class="glyphicon glyphicon-search"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-default btn-sm btn-block hidden-lg hidden-md" data-toggle="collapse" data-target="#demo">
+                Refine your search <span class="caret"></span>
+            </button>
+
+            <div id="demo" class="collapse in">
+                <hr>
+                <div class="list-group list-group">
+                    <div style="display: flex">
+                        @if (categories.Any())
+                        {
+                            <h4>Categories</h4>
+                        }
+                        else
+                        {
+                            <h4>No categories</h4>
+                        }
+                        <button asp-controller="UserCategory" asp-action="Create" class="btn btn-default" style="margin-left: 20px" data-toggle="collapse" data-target="#new-category">New category </button>
+                    </div>
+                    <div id="new-category" class="collapse">
+                        @Html.Partial("/Views/UserCategory/Create.cshtml", category)
+                    </div>
+                    @Html.Partial("/Views/UserCategory/List.cshtml", categories)
+                    <div id="categories" class="collapse">
+                        <div class="container">
+                            <ul class="list-group" style="line-height:30px;width: 360px;">
+                                <li class="list-group-item">
+                                    <span class="label label-default">admin</span>
+                                    <span class="pull-right button-group">
+                                        <span class="badge">2</span>
+                                        <a href="/admin/userA" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span></a>
+                                        <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button class="btn btn-default btn-sm btn-block" data-toggle="collapse" data-target="#categories">More <span class="caret"></span></button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                New post
+            </button>
+            <div class="modal fade" id="myModal">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Modal Heading</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            @Html.Partial("/Views/User/CreateUserPost.cshtml", newPost)
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            <a asp-controller="OtherAccount" asp-action="ListUsers" class="btn btn-primary">Searching of users</a>
+            <hr>
+
+            @Html.Partial("/Views/User/ListPosts.cshtml", Model.UserPosts)
+            <ul class="pagination pagination-lg pull-right">
+                <li><a href="#">«</a></li>
+                <li class="active"><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li><a href="#">»</a></li>
+            </ul>
+
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

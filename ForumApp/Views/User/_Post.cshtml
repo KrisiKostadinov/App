@@ -1,0 +1,27 @@
+﻿@model List<ForumApp.Models.User.Post>
+<div class="row">
+    <div class="column">
+        @foreach (var post in Model)
+        {
+        <div class="card">
+            @if (post.Title != null)
+            {
+                <div style="display: flex">
+                    <a href="#"><h2 id="title">@post.Title</h2></a>
+                    <div style="display: flex">
+                        <h6 style="margin-left: 20px">Published from</h6>
+                        <h6 style="margin-left: 2px"><b>@post.User.FirstName @post.User.LastName</b></h6>
+                        <h6 style="margin-left: 20px">Published on </h6>
+                        <h6 style="margin-left: 2px"><b>@post.CreatedDate</b></h6>
+                        <h6 style="margin-left: 20px">Last redaction on </h6>
+                        <h6 style="margin-left: 2px"><b>@post.LastUpdatedDate</b></h6>
+                        <h6 style="margin-left: 20px"><b><a class="btn btn-primary" href="#">Settings</a></b></h6>
+                    </div>
+                </div>
+            }
+            <p>@post.Description</p>
+            <a asp-controller="PostComment" asp-action="Create" asp-route-id="@post.Id">Add comment</a>
+        </div>
+        }
+    </div>
+</div>

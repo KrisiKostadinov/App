@@ -1,0 +1,41 @@
+﻿@model IEnumerable<ApplicationUser>
+
+@{
+    ViewData["Title"] = "ListUsers";
+}
+<link href="~/css/search.css" rel="stylesheet" />
+<div class="container">
+    <input type="text" placeholder="Search...">
+    <div class="search"></div>
+</div>
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+
+            @if (Model.Count() == 1)
+            {
+                <h2>@Model.Count() User</h2>
+            }
+            else
+            {
+                <h2>@Model.Count() Users</h2>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="OtherAccount" asp-action="Other" asp-route-id="@item.Id">@item.FirstName @item.LastName</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}

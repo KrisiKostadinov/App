@@ -1,0 +1,65 @@
+﻿@model ForumApp.Models.User.Post
+@{
+    ViewData["Title"] = "Details";
+}
+
+<link href="~/css/site.css" rel="stylesheet" />
+<body style="background-color: lightgrey">
+
+    <div class="header" style="background-color: gray; border: solid 1px #fff; margin-top: 60px; color: #ffffff; text-align: center">
+        <div>
+            <h1 class="titles">@Model.Title</h1>
+            <h4 class="description">@Model.Description</h4>
+        </div>
+        <hr style="background-color: #ffffff">
+        <div class="dates" style="text-align: center; color: #ffffff">
+            <h4>Author: <b>@Model.User.FirstName</b> | Created: @Model.CreatedDate | Comments: <b>@Model.CommentCount</b></h4>
+        </div>
+        <div class="footer" style="background-color: lightgrey; border-radius: 25px; height: 100px">
+            <h2>
+                <a asp-controller="LikePost" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                <a asp-controller="LikePost" asp-action="CreateDis" asp-route-id="@Model.Id" class="btn btn-info btn-lg"><span class="	glyphicon glyphicon-thumbs-down"></span></a>
+                @if (Model.User.UserName == User.Identity.Name)
+                {
+                    <a asp-controller="Post" asp-action="Edit" asp-route-id="@Model.Id" class="glyphicon glyphicon-pencil"></a>
+                }
+                <a href="/Post/All/@ViewContext.RouteData.Values["id"]" class="btn btn-link"><h2><span class="glyphicon glyphicon-share-alt" style="-webkit-transform: scaleX(-1); transform: scaleX(-1); color: red"></span></h2></a>
+                @if (Model.User.UserName == User.Identity.Name)
+                {
+                    <a asp-controller="Post" asp-action="Delete" asp-route-id="@Model.Id"><span class="glyphicon glyphicon-remove" style="color: red"></span></a>
+                }
+            </h2>
+        </div>
+    </div>
+</body>
+
+<link href="~/css/custom.css" rel="stylesheet" />
+<a asp-controller="Comment" asp-action="Create" class="btn btn-success" style="border-radius: 25px">What do you think?...</a>
+<div>
+    @foreach (var comment in Model.Comments)
+    {
+        <article class="forum-post post-item highlighted-post" style="border-radius: 25px">
+            <div class="head-post table-holder">
+                <div class="post-content">
+                    <div>
+                        <p>@comment.Description</p>
+                    </div>
+                    <div class="meta-info table-holder meta-details">
+                        <div class="table-holder">
+                            <div class="row">
+                                <div class="cell" , style="margin-left: 10px">
+                                    <span class="item-wrap">
+                                        <i class="fa fa-calendar">Author: </i>
+                                        <span class="post-date" title="Author">
+                                            @comment.Author.FirstName
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    }
+</div>

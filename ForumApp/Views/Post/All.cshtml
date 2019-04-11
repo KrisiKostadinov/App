@@ -1,0 +1,101 @@
+﻿@using ShopProject.Models
+@model PaginatedList<Post>
+@{
+    ViewData["Title"] = "All";
+    List<Category> categories = (List<Category>)ViewData["Categories"];
+    List<int> postsLater = (List<int>)ViewData["postsLater"];
+}
+@using PagedList.Mvc;
+@using PagedList;
+
+<link href="~/css/site.css" rel="stylesheet" />
+<link href="~/css/custom.css" rel="stylesheet" />
+<body style="background-color: #F5F5F5">
+    @if (ViewData["Error"] != null)
+    {
+        <h2>@ViewData["Error"]</h2>
+    }
+    <div style="width: auto">
+        <div>
+            <a asp-controller="Category" asp-action="Create" class="btn btn-primary" style="margin-top: 20px">New category</a>
+            <a asp-controller="Post" asp-action="Create" class="btn btn-primary" style="margin-top: 20px">New post</a>
+            @if (categories.Count > 0)
+            {
+                <a asp-controller="Category" asp-action="DeleteAll" class="btn btn-danger" style="margin-top: 20px">Delete all My categories and posts</a>
+                if (Model.Count > 0)
+                {
+                    <a asp-controller="Post" asp-action="DeleteAll" class="btn btn-danger" style="margin-top: 20px">Delete all posts</a>
+                }
+            }
+        </div>
+        <div id="vertical-menu" style="float: left">
+            @if (categories != null)
+            {
+                <h4 class="titles">Categories @categories.Count</h4>
+                foreach (var category in categories.OrderByDescending(d => d.CreatedDate))
+                {
+                    <a asp-controller="Post" asp-action="SelectPosts" asp-route-id="@category.Id" id="vertical-menu-a">@category.Title</a>
+                }
+            }
+        </div>
+    </div>
+    <div>
+        <h2 class="titles">All posts @Model.Count</h2>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <br>
+        @foreach (var post in Model)
+        {
+            if (postsLater.Contains(post.Id))
+            {
+                <div style="display: inline-block; margin-left: 60px">
+                    <div style="width: 100%; display: block; margin-bottom: 20px; float: left">
+                        <h4 style="text-align: center; color: darkorange">Later</h4>
+                    <div id="post" style="background-color: darkorange">
+                                <a asp-controller="PostLater" asp-action="Cancelate" asp-route-id="@post.Id" class="btn btn-danger">Cancelate</a>
+                                <h3 style="color: #ffffff">@post.Title</h3>
+                            <h4 style="color: #ffffff">@post.Subtitle</h4>
+                            <h6 style="text-overflow: ellipsis; color: #ffffff">@post.Description</h6>
+                            <h6 style="color: #ffffff">@post.CreatedDate</h6>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="display: inline-block; margin-left: 60px">
+                    <div style="width: 100%; display: block; margin-bottom: 20px; float: left">
+                        <div id="post" style="background-color: chocolate">
+                            <a asp-controller="PostLater" asp-action="Create" asp-route-id="@post.Id" class="btn btn-success">Later</a>
+                            <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id">
+                                <h3 style="color: #ffffff">@post.Title</h3>
+                            </a>
+                            <h4 style="color: #ffffff">@post.Subtitle</h4>
+                            <h6 style="text-overflow: ellipsis; color: #ffffff">@post.Description</h6>
+                            <h6 style="color: #ffffff">@post.CreatedDate</h6>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</body>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="All"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="All"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>

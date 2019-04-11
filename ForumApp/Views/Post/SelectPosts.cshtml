@@ -1,0 +1,84 @@
+﻿@using ShopProject.Models
+@model ShopProject.Models.Category
+@{
+    ViewData["Title"] = "SelectPosts";
+    List<Category> categories = (List<Category>)ViewData["Categories"];
+    string currentCategory = (string)ViewData["DelAll"];
+    List<Post> posts = (List<Post>)ViewData["Posts"];
+}
+
+<body style="background-color: #F5F5F5">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <div>
+        <div style="width: auto">
+            <a asp-controller="Category" asp-action="Create" class="btn btn-primary" style="margin-top: 20px">New category</a>
+            <a asp-controller="Post" asp-action="Create" class="btn btn-primary" style="margin-top: 20px">New post</a>
+            <a asp-controller="Category" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning" style="margin-top: 20px">Edit</a>
+            @if (categories.Any() && currentCategory != null)
+            {
+                <a asp-controller="Category" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger" style="margin-top: 20px">Delete @Model.Title</a>
+            }
+            @if (ViewData["DelAll"] != null && posts.Count > 0)
+            {
+                <a asp-controller="Post" asp-action="DelAll" asp-route-id="@posts[0].Category.Id" class="btn btn-danger" style="margin-top: 20px">Delete all <b>My posts</b> in @ViewData["DelAll"]</a>
+            }
+        </div>
+        <div>
+            <div id="vertical-menu" style="float: left">
+                @if (categories != null)
+                {
+                    <h4 class="titles">Categories @categories.Count</h4>
+                    foreach (var category in categories.OrderByDescending(d => d.CreatedDate))
+                    {
+                        <a asp-controller="Post" asp-action="SelectPosts" asp-route-id="@category.Id" id="vertical-menu-a">@category.Title</a>
+                    }
+                }
+            </div>
+        </div>
+        <div>
+            <h2 class="titles">@ViewData["Category"]</h2>
+            @if (Model != null)
+            {
+                foreach (var post in posts)
+                {
+                    if (!post.IsReadToLater)
+                    {
+                        <div style="display: inline-block; margin-left: 60px">
+                            <div style="width: 100%; display: block; margin-bottom: 20px; float: left">
+                                <div id="post" style="background-color: chocolate">
+                                    <a asp-controller="Post" asp-action="Later" asp-route-id="@post.Id" class="btn btn-success">Later</a>
+                                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id">
+                                        <h3 style="color: #ffffff">@post.Title</h3>
+                                    </a>
+                                    <h4 style="color: #ffffff">@post.Subtitle</h4>
+                                    <h6 style="text-overflow: ellipsis; color: #ffffff">@post.Description</h6>
+                                    <h6 style="color: #ffffff">@post.CreatedDate</h6>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="display: inline-block; margin-left: 60px">
+                            <div style="width: 100%; display: block; margin-bottom: 20px; text-align: center">
+                                <h4 style="color: darkorange">Later</h4>
+                                <div id="post" style="background-color: darkorange">
+                                    <a asp-controller="Post" asp-action="NotLater" asp-route-id="@post.Id" class="btn btn-danger">Cancelate</a>
+                                    <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id">
+                                        <h3 style="color: #ffffff">@post.Title</h3>
+                                    </a>
+                                    <h4 style="color: #ffffff">@post.Subtitle</h4>
+                                    <h6 style="text-overflow: ellipsis; color: #ffffff">@post.Description</h6>
+                                    <h6 style="color: #ffffff">@post.CreatedDate</h6>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+</body>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

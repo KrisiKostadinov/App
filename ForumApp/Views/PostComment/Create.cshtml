@@ -1,0 +1,47 @@
+﻿@using ForumApp.Models.User
+@model Comment
+
+@{
+    ViewData["Title"] = "Create";
+    List<string> categories = (List<string>)ViewData["CategoryNames"];
+}
+<div class="container text-center">
+
+    <link href="~/css/site.css" rel="stylesheet" />
+    <div class="row alert-info" style="border-radius: 25px">
+
+        @if (ViewData["Error"] != null)
+        {
+            <h2 style="font-family: fantasy; color: red">@ViewData["Error"]</h2>
+        }
+
+        @if (ViewData["Sucess"] == null)
+        {
+            <h2 style="font-family: identifier">New comment</h2>
+        }
+        else
+        {
+            <div class="success" style="background-color: aqua; border-radius: 25px; margin-left: 20px">
+                <h2 style="color: green; text-align: center">@ViewData["Sucess"]</h2>
+            </div>
+        }
+        <div class="col-md-12 col-md-offset-0" style="margin-top: 20px">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <div style="color: red; text-align: left">
+                        <h1>*</h1>
+                    </div>
+                    <textarea asp-for="Description" class="form-control" style="border-radius: 25px; height: 200px; font-size: 20px; text-align: center; font-family: identifier" placeholder="what do you think?..." autofocus></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                    <a href="/User/Index/PostComment/ShowComments?id=@ViewContext.RouteData.Values["id"]" class="btn btn-default">Back to Details</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

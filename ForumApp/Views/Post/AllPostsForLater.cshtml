@@ -1,0 +1,48 @@
+﻿@using ShopProject.Models
+@model IEnumerable<Post>
+
+@{
+    ViewData["Title"] = "AllPostsForLater";
+}
+<body>
+    <link href="~/css/site.css" rel="stylesheet" />
+    @if (Model.Count() == 0 || Model == null)
+    {
+        <h2 class="titles" style="color: red">No market for later</h2>
+    }
+    else
+    {
+        <h2 class="titles">For read later</h2>
+    }
+    @foreach (var post in Model)
+    {
+        <div style="background-color: lightgrey; border-radius: 10px">
+            <div>
+                <h1 class="titles">@post.Title</h1>
+                <h2 class="titles">@post.Subtitle</h2>
+                <h4 class="description" style="text-align: center">@post.Description</h4>
+            </div>
+            <div class="footer">
+                <h2>
+                    <a asp-controller="PostLater" asp-action="Delete" asp-route-id="@post.Id" class="glyphicon glyphicon-star btn btn-danger"></a>
+                    <a asp-controller="LikePost" asp-action="Create" asp-route-id="@post.Id" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-thumbs-up"></span> @post.LikeCount</a>
+                    <a asp-controller="LikePost" asp-action="CreateDis" asp-route-id="@post.Id" class="btn btn-info btn-lg"><span class="	glyphicon glyphicon-thumbs-down"></span> @post.DislikeCount</a>
+                    @if (post.Author.UserName == User.Identity.Name)
+                    {
+                        <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" class="glyphicon glyphicon-pencil"></a>
+                    }
+                    <a asp-controller="Post" asp-action="All" class="btn btn-link">
+                        <h2><span class="glyphicon glyphicon-share-alt" style="-webkit-transform: scaleX(-1); transform: scaleX(-1); color: red"></span></h2>
+                    </a>
+                    @if (post.Author.UserName == User.Identity.Name)
+                    {
+                        <a asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id"><span class="glyphicon glyphicon-remove" style="color: red"></span></a>
+                    }
+                </h2>
+                <div class="dates" style="text-align: center">
+                    <h4>Author: <b>@post.Author.FirstName</b> | Created: @post.CreatedDate | Last Created: @post.LastCreatedDate | Category: <b>@post.Category.Title</b>| <a asp-controller="Comment" asp-action="AllForPost" asp-route-id="@post.Id" class="btn btn-primary">Comments: @post.NumberComments</a></h4>
+                </div>
+            </div>
+        </div>
+    }
+</body>
