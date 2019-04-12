@@ -1,4 +1,6 @@
-﻿@model List<ForumApp.Models.User.Post>
+﻿@using ForumApp.Models.User
+@model PaginatedList<Post>
+@using PagedList.Mvc;
 
 @foreach (var post in Model.OrderByDescending(p => p.CreatedDate))
 {

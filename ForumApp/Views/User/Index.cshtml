@@ -1,5 +1,5 @@
 ﻿@using ForumApp.Models.User
-@model ApplicationUser
+@model PaginatedList<Post>
 @{
     ApplicationUser user = (ApplicationUser)ViewData["User"];
     ViewData["Title"] = "Index";
@@ -72,7 +72,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    
                                     <a asp-controller="UserCategory" asp-action="Edit" asp-route-id="@category.Id" type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit-category"><span class="glyphicon glyphicon-edit"></span></a>
                                     <a asp-controller="UserCategory" asp-action="Delete" asp-route-id="@category.Id" type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-category"><span class="glyphicon glyphicon-remove"></span></a>
                                 </span>
@@ -96,44 +96,53 @@
                     <input type="submit" style="border-radius: 25px" value="Search" class="btn btn-primary" />
                 </form>
             </div>
-                <div class="modal fade" id="myModal">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
+            <div class="modal fade" id="myModal">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
 
-                            <!-- Modal Header -->
-                            <div class="modal-header">
-                                <h4 class="modal-title">Modal Heading</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-
-                            <!-- Modal body -->
-                            <div class="modal-body">
-                                @Html.Partial("/Views/User/CreateUserPost.cshtml", new Post())
-                            </div>
-
-                            <!-- Modal footer -->
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
-
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Modal Heading</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            @Html.Partial("/Views/User/CreateUserPost.cshtml", new Post())
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+
                     </div>
                 </div>
-
-                <hr>
-                @Html.Partial("/Views/User/ListPosts.cshtml", Model.UserPosts)
-                <ul class="pagination pagination-lg pull-right">
-                    <li><a href="#">«</a></li>
-                    <li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#">»</a></li>
-                </ul>
-
-
             </div>
+            <hr>
+            @Html.Partial("/Views/User/ListPosts.cshtml", Model)
+            <hr>
+            @{
+                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+            }
+            <div style="text-align: center">
+                <a asp-controller="User" asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @prevDisabled">
+                    Previous
+                </a>
+                <a asp-controller="User" asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @nextDisabled">
+                    Next
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 @section Scripts {

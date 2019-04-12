@@ -1,11 +1,12 @@
 ﻿@using ForumApp.Models.User
-@model ApplicationUser
+@model PaginatedList<Post>
 @{
     ViewData["Title"] = "Index";
     List<Category> categories = (List<Category>)ViewData["Categories"];
+    ApplicationUser user = (ApplicationUser) ViewData["User"];
 }
 <div class="form-group">
-    <h4 class="text-center">@Model.FirstName @Model.LastName</h4>
+    <h4 class="text-center">@user.FirstName @user.LastName</h4>
     <div class="btn-group pull-right">
         <a href="#" class="btn btn-success btn-sm">Settings</a>
     </div>
@@ -56,85 +57,33 @@
                         </div>
                     </div>
                     <button class="btn btn-default btn-sm btn-block" data-toggle="collapse" data-target="#categories">More <span class="caret"></span></button>
-
-                    <hr class="">
-                    <h4 class="">Viewing Options</h4>
-                    <a href="#" class="list-group-item"><span class="badge">14</span> Upcoming Sessions</a>
-
-                    <a href="#" class="list-group-item"><span class="badge">3</span> OnDemand</a>
-                    <hr class="">
-                    <a href="#" class="list-group-item">Archived Courses</a>
-                    <a href="#" class="list-group-item">Courses In Development</a>
                 </div>
-            </div>
-
-
-
-            <div class="hidden-sm hidden-xs">
-
-                <hr>
-
-                <div class="well">
-
-                    <h4>Premium Membership</h4>
-                    <p>Gain unlimited access to our entire course library.</p>
-                    <button class="btn btn-sm btn-warning">Learn more</button>
-
-                    <hr>
-                    <p class="text-center ">Already a member? <a href="#">Sign in.</a></p>
-                </div>
-
-
-                <hr>
-
-                <div class="well">
-
-                    <h4>Course Catalog</h4>
-                    <p><a href="#"><img src="http://placehold.it/400X500" class="img-responsive"></a></p>
-
-                    <p>Everything you need to know about our webinars, including speaker bios, topics, and courses.</p>
-
-                    <button class="btn btn-sm btn-block btn-warning">Download</button>
-                </div>
-                <hr>
-                <h4 class="text-center">CPE Partners</h4>
-                <p><a href="#"><img class="center-block" src="http://placehold.it/100X100"></a></p>
             </div>
         </div>
         <div class="col-md-7">
-            <div class="well hidden-xs">
-                <div class="row">
-                    <div class="col-xs-4">
-                        <select class="form-control">
-                            <option>Featured</option>
-                            <option>Recently Added</option>
-                            <option>Next Upcoming Session</option>
-                            <option>A-Z</option>
-                            <option>Z-A</option>
-                        </select>
-                    </div>
-                    <div class="col-xs-8">
-                        <div class="btn-group pull-right">
-                            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-th"></span></button>
-                            <button type="button" class="btn btn-default active"><span class="glyphicon glyphicon-th-list"></span></button>
-                            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-list"></span></button>
-                        </div>
-                    </div>
-                </div>
+            @Html.Partial("/Views/User/ListPosts.cshtml", Model)
+            
+            <hr>
+            @{
+                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+            }
+            <div style="text-align: center">
+                <a asp-controller="OtherAccount" asp-action="Other"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @prevDisabled">
+                    Previous
+                </a>
+                <a asp-controller="OtherAccount" asp-action="Other"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @nextDisabled">
+                    Next
+                </a>
             </div>
-
-            @Html.Partial("/Views/User/ListPosts.cshtml", Model.UserPosts)
-            <ul class="pagination pagination-lg pull-right">
-                <li><a href="#">«</a></li>
-                <li class="active"><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li><a href="#">»</a></li>
-            </ul>
-
-
         </div>
     </div>
 </div>

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ForumApp.Data;
 using ForumApp.Models;
 using ForumApp.Models.User;
@@ -37,14 +39,52 @@ namespace ForumApp.Controllers
         }
 
         [Authorize]
-        [HttpGet]
-        public IActionResult Other(string id)
+        public async Task<IActionResult> Other
+        (
+            string id,
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? pageNumber)
         {
-            ApplicationUser user = context.Users.Include(p => p.UserPosts).Include(c => c.UserComments).FirstOrDefault(u => u.Id == id);
-            List<Category> categories = context.UserCategories.Where(c => c.User.Id == id).ToList();
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
 
-            ViewData["Categories"] = categories;
-            return View(user);
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var posts = from s in context.UserPosts
+                    .Include(t => t.User)
+                    .Include(c => c.Category)
+                    .ThenInclude(t => t.User)
+                    .Where(u => u.User.Id == id)
+                select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                posts = posts.Where(s => s.Title.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    posts = posts.OrderByDescending(s => s.Title);
+                    break;
+            }
+            int pageSize = 3;
+
+            ViewData["Categories"] = context.UserCategories.Include(u => u.User).Include(p => p.UserPosts).Where(c => c.User.Id == id).ToList();
+
+            ViewData["User"] = context.Users.FirstOrDefault(u => u.Id == id);
+            return View(await PaginatedList<Post>.CreateAsync(posts.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         [Authorize]

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using ForumApp.Data;
 using ForumApp.Models;
 using ForumApp.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Web;
+using PagedList;
 
 namespace ForumApp.Controllers
 {
@@ -21,20 +24,54 @@ namespace ForumApp.Controllers
         }
 
         [Authorize]
-        public IActionResult Index(int? id)
+        public async Task<IActionResult> Index
+        (
+            int? id,
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? pageNumber)
         {
-            if (id != null)
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (searchString != null)
             {
-                List<Comment> showComments = context.UserComments.Where(p => p.PostId == id).ToList();
-                return PartialView("/Views/PostComment/ShowComments.cshtml", showComments);
+                pageNumber = 1;
             }
-            ApplicationUser user = context.Users.Include(p => p.UserPosts).Include(c => c.UserComments).FirstOrDefault(u => u.UserName == User.Identity.Name);
-            ViewData["User"] = user;
+            else
+            {
+                searchString = currentFilter;
+            }
 
-            List<Category> categories = context.UserCategories.Include(p => p.UserPosts).Where(c => c.User.UserName == User.Identity.Name).ToList();
-            ViewData["Categories"] = categories;
+            ViewData["CurrentFilter"] = searchString;
 
-            return View(user);
+            var posts = from s in context.UserPosts
+                    .Include(t => t.User)
+                    .Include(c => c.Category)
+                    .ThenInclude(t => t.User)
+                    .Where(u => u.User.UserName == User.Identity.Name)
+                select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                posts = posts.Where(s => s.Title.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    posts = posts.OrderByDescending(s => s.Title);
+                    break;
+            }
+
+            int pageSize = 3;
+
+            ViewData["Categories"] = context.UserCategories.Where(c => c.User.UserName == User.Identity.Name).ToList();
+
+            ViewData["User"] = context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+
+            return View(await PaginatedList<Post>.CreateAsync(posts.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         public IActionResult GetInformation(string country)

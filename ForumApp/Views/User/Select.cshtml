@@ -11,7 +11,7 @@
                  <h3 class="title">@post.Title</h3>
                  <h6>published on: <b>@post.CreatedDate</b></h6>
                  <p>@post.Description</p>
-                 <p class="text-muted">Presented by <a href="#">@post.User.FirstName @post.User.LastName</a></p>
+                 <p class="text-muted">Presented by <a href="#">@post.Category.User.FirstName @post.Category.User.LastName</a></p>
                  <a asp-controller="PostComment" asp-action="Create" asp-route-id="@post.Id" class="btn btn-primary btn-sm">Add comment</a>
                         
                  @if (post.CommentCount > 0)
