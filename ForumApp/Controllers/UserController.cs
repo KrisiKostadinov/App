@@ -31,7 +31,7 @@ namespace ForumApp.Controllers
             ApplicationUser user = context.Users.Include(p => p.UserPosts).Include(c => c.UserComments).FirstOrDefault(u => u.UserName == User.Identity.Name);
             ViewData["User"] = user;
 
-            List<Category> categories = context.UserCategories.Where(c => c.User.UserName == User.Identity.Name).ToList();
+            List<Category> categories = context.UserCategories.Include(p => p.UserPosts).Where(c => c.User.UserName == User.Identity.Name).ToList();
             ViewData["Categories"] = categories;
 
             return View(user);
@@ -55,14 +55,14 @@ namespace ForumApp.Controllers
         [HttpGet]
         public IActionResult CreateUserPost(int? id)
         {
-            List<Category> categories = context.UserCategories.ToList();
+            List<Category> categories = context.UserCategories.Where(t => t.User.UserName == User.Identity.Name).ToList();
             ViewData["Categories"] = categories;
             return View();
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult CreateUserPost(Post post, string category)
+        public IActionResult CreateUserPost(Post post, int categoryId)
         {
             if (ModelState.IsValid)
             {
@@ -71,10 +71,11 @@ namespace ForumApp.Controllers
                 ApplicationUser user = context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
 
                 post.User = user;
-                Category dbCategory = context.UserCategories
-                    .FirstOrDefault(c => c.Title == category);
+                int dbCategoryId = context.UserCategories
+                    .FirstOrDefault(c => c.Id == categoryId)
+                    .Id;
 
-                post.Category = dbCategory;
+                post.CategoryId = dbCategoryId;
 
                 context.UserPosts.Add(post);
 
@@ -119,9 +120,10 @@ namespace ForumApp.Controllers
             {
                 return RedirectToAction("Index");
             }
-            List<Post> posts = context.UserPosts.Include(t => t.User).Where(p => p.Category.Id == id).ToList();
 
-            return View(posts);
+            Category category = context.UserCategories.Include(p => p.UserPosts).Include(u => u.User).FirstOrDefault(c => c.Id == id);
+
+            return View(category.UserPosts);
         }
     }
 }

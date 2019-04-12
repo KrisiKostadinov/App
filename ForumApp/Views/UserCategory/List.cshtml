@@ -1,48 +1,38 @@
 ﻿@using ForumApp.Models.User
-@model List<Category>
-@if (Model != null && Model.Count > 0)
+@model IEnumerable<Category>
+@if (Model != null && Model.Count() > 0)
 {
     <div class="container">
         <ul class="list-group" style="line-height: 30px; width: 360px">
-            <li class="list-group-item">
-                <a class="btn btn-info" asp-controller="User" asp-action="Select" asp-route-id="@Model[Model.Count - 1].Id">@Model[Model.Count - 1].Title</a>
-                <span class="label label-primary">New</span>
-                <span class="pull-right button-group">
-                    <span class="badge">2</span>
-                    @if (Model[Model.Count - 1].User.UserName == User.Identity.Name)
-                    {
-                        <a asp-controller="UserCategory" asp-action="Edit" asp-route-id="@Model[Model.Count - 1].Id" type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit-category"><span class="glyphicon glyphicon-edit"></span></a>
-                        <a asp-controller="UserCategory" asp-action="Delete" asp-route-id="@Model[Model.Count - 1].Id" type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-category"><span class="glyphicon glyphicon-remove"></span></a>
-                    }
-                </span>
-            </li>
-            @foreach (var category in Model.Take(Model.Count - 1))
+            <div class="modal fade" id="edit-category">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            @Html.Partial("/Views/UserCategory/Edit.cshtml", new Category())
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="delete-category">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            @Html.Partial("/Views/UserCategory/Delete.cshtml", new Category())
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @foreach (var category in Model.Reverse().Take(5))
             {
                 <li class="list-group-item">
                     <a class="btn btn-info" asp-controller="User" asp-action="Select" asp-route-id="@category.Id">@category.Title</a>
                     <span class="pull-right button-group">
-                        <span class="badge">2</span>
-                        <div class="modal fade" id="edit-category">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        @Html.Partial("/Views/UserCategory/Edit.cshtml", new Category())
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal fade" id="delete-category">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        @Html.Partial("/Views/UserCategory/Delete.cshtml", new Category())
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <a asp-controller="UserCategory" asp-action="Edit" asp-route-id="@category.Id" type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit-category"><span class="glyphicon glyphicon-edit"></span></a>
-                        <a asp-controller="UserCategory" asp-action="Delete" asp-route-id="@category.Id" type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-category"><span class="glyphicon glyphicon-remove"></span></a>
+                        <span class="badge">@category.UserPosts.Count</span>
+                        @if (category.User.UserName == User.Identity.Name)
+                        {
+                            <a asp-controller="UserCategory" asp-action="Edit" asp-route-id="@category.Id" type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit-category"><span class="glyphicon glyphicon-edit"></span></a>
+                            <a asp-controller="UserCategory" asp-action="Delete" asp-route-id="@category.Id" type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-category"><span class="glyphicon glyphicon-remove"></span></a>
+                        }
                     </span>
                 </li>
             }

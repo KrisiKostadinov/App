@@ -4,9 +4,7 @@
     ApplicationUser user = (ApplicationUser)ViewData["User"];
     ViewData["Title"] = "Index";
     Category category = new Category();
-    List<Category> categories = (List<Category>)ViewData["Categories"];
-    Post newPost = new Post();
-    List<Comment> showComments = new List<Comment>();
+    IEnumerable<Category> categories = (IEnumerable<Category>)ViewData["Categories"];
 }
 <div class="form-group">
     <h4 class="text-center">@user.FirstName @user.LastName</h4>
@@ -50,18 +48,36 @@
                     </div>
                     @Html.Partial("/Views/UserCategory/List.cshtml", categories)
                     <div id="categories" class="collapse">
-                        <div class="container">
-                            <ul class="list-group" style="line-height:30px;width: 360px;">
-                                <li class="list-group-item">
-                                    <span class="label label-default">admin</span>
-                                    <span class="pull-right button-group">
-                                        <span class="badge">2</span>
-                                        <a href="/admin/userA" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span></a>
-                                        <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
+                        @foreach (var currentCategory in categories.Reverse().Skip(5))
+                        {
+                            <li class="list-group-item">
+                                <a class="btn btn-info" asp-controller="User" asp-action="Select" asp-route-id="@currentCategory.Id">@currentCategory.Title</a>
+                                <span class="pull-right button-group">
+                                    <span class="badge">2</span>
+                                    <div class="modal fade" id="edit-category">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    @Html.Partial("/Views/UserCategory/Edit.cshtml", new Category())
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="delete-category">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    @Html.Partial("/Views/UserCategory/Delete.cshtml", new Category())
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a asp-controller="UserCategory" asp-action="Edit" asp-route-id="@category.Id" type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit-category"><span class="glyphicon glyphicon-edit"></span></a>
+                                    <a asp-controller="UserCategory" asp-action="Delete" asp-route-id="@category.Id" type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-category"><span class="glyphicon glyphicon-remove"></span></a>
+                                </span>
+                            </li>
+                        }
                     </div>
                     <button class="btn btn-default btn-sm btn-block" data-toggle="collapse" data-target="#categories">More <span class="caret"></span></button>
                 </div>
@@ -69,49 +85,55 @@
         </div>
         <div class="col-md-7">
 
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                New post
-            </button>
-            <div class="modal fade" id="myModal">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
+            <div class="form-inline">
+                <form method="get" asp-controller="OtherAccount" asp-action="ListUsers">
+                    <button type="button" class="btn btn-primary" style="border-radius: 25px" data-toggle="modal" data-target="#myModal">
+                        New post
+                    </button>
+                    <div class="input-group" style="margin-left: 20px">
+                        <input type="text" required style="border-radius: 25px" class="form-control" placeholder="Search" name="searchUser" id="srch-term">
+                    </div>
+                    <input type="submit" style="border-radius: 25px" value="Search" class="btn btn-primary" />
+                </form>
+            </div>
+                <div class="modal fade" id="myModal">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
 
-                        <!-- Modal Header -->
-                        <div class="modal-header">
-                            <h4 class="modal-title">Modal Heading</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Modal Heading</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                @Html.Partial("/Views/User/CreateUserPost.cshtml", new Post())
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+
                         </div>
-
-                        <!-- Modal body -->
-                        <div class="modal-body">
-                            @Html.Partial("/Views/User/CreateUserPost.cshtml", newPost)
-                        </div>
-
-                        <!-- Modal footer -->
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-
                     </div>
                 </div>
+
+                <hr>
+                @Html.Partial("/Views/User/ListPosts.cshtml", Model.UserPosts)
+                <ul class="pagination pagination-lg pull-right">
+                    <li><a href="#">«</a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#">»</a></li>
+                </ul>
+
+
             </div>
-            
-            <a asp-controller="OtherAccount" asp-action="ListUsers" class="btn btn-primary">Searching of users</a>
-            <hr>
-
-            @Html.Partial("/Views/User/ListPosts.cshtml", Model.UserPosts)
-            <ul class="pagination pagination-lg pull-right">
-                <li><a href="#">«</a></li>
-                <li class="active"><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li><a href="#">»</a></li>
-            </ul>
-
-
-        </div>
     </div>
 </div>
 @section Scripts {
