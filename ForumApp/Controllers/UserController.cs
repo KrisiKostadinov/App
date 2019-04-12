@@ -85,33 +85,6 @@ namespace ForumApp.Controllers
             return RedirectToAction("Index", "User");
         }
 
-        //[Authorize]
-        //[HttpPost]
-        //public IActionResult CreateComment(int? id, Comment comment)
-        //{
-        //    Post post = context.UserPosts.FirstOrDefault(u => u.Id == id);
-        //    comment.Post = post;
-
-        //    context.UserComments.Add(comment);
-        //    context.SaveChanges();
-        //    return RedirectToAction("Index", "User");
-        //}
-
-        //[Authorize]
-        //[HttpGet]
-        //public IActionResult _Post()
-        //{
-        //    List<Post> posts = context.UserPosts.ToList();
-
-        //    return View(posts);
-        //}
-        //public IActionResult ShowCommentsForPost(int id)
-        //{
-        //    ViewData["ShowComments"] = context.UserComments.Where(c => c.PostId == id).ToList();
-
-        //    return RedirectToAction("ShowComments", "PostComment");
-        //}
-
         [Authorize]
         [HttpGet]
         public IActionResult Select(int? id)
