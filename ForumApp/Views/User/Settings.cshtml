@@ -1,0 +1,27 @@
+﻿@model ForumApp.Models.User.Post
+
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<h2>Settings post - @Model.Title</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Settings">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="IsPublic" class="checkbox"/> @Html.DisplayNameFor(model => model.IsPublic)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-danger">Back</a>
+            </div>
+        </form>
+    </div>
+</div>

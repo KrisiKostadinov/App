@@ -71,6 +71,7 @@ namespace ForumApp.Controllers
                         .ThenInclude(t => t.User)
                         .Where(u => u.User.Id == id)
                         .Where(p => p.Title.Contains(searchString))
+                        .Where(p => p.IsPublic)
                         .OrderByDescending(p => p.CreatedDate)
                     select s;
             }
@@ -82,6 +83,7 @@ namespace ForumApp.Controllers
                         .Include(c => c.Category)
                         .ThenInclude(t => t.User)
                         .Where(u => u.User.Id == id)
+                        .Where(p => p.IsPublic)
                         .OrderByDescending(p => p.CreatedDate)
                     select s;
             }

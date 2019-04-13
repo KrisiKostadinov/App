@@ -16,6 +16,9 @@ namespace ForumApp.Models.User
         
         public string Title { get; set; }
 
+        [Display(Name = "Public / Private post")]
+        public bool IsPublic { get; set; } = true;
+
         [Required]
         public string Description { get; set; }
 

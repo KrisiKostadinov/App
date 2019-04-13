@@ -1,12 +1,17 @@
 ﻿@using ForumApp.Models.User
 @model PaginatedList<Post>
-@using PagedList.Mvc;
 
 @foreach (var post in Model)
 {
-    <div class="row" style="background-color: lightgrey; margin-top: 20px; border-radius: 25px">
+    <div class="row" style="background-color: lightgrey; margin-top: 20px; border-radius: 10px">
         <div class="col-sm-12">
-            <a href="#"><h3 class="title">@post.Title</h3></a>
+            <div class="list-inline">
+                <a href="#" style="font-size: 20px">@post.Title</a>
+                @if (post.User.UserName == User.Identity.Name)
+                {
+                    <a asp-controller="User" asp-action="Settings" asp-route-id="@post.Id" style="float: right; font-size: 26px; text-decoration: none; color: black" class="glyphicon glyphicon-option-horizontal"></a>
+                }
+            </div>
             <h6>published on: <b>@post.CreatedDate</b></h6>
             <p>@post.Description</p>
             <p class="text-muted">Presented by <a href="#">@post.User.FirstName @post.User.LastName</a></p>

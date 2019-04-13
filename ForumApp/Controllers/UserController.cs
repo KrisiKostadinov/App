@@ -53,7 +53,7 @@ namespace ForumApp.Controllers
                         .Where(u => u.User.UserName == User.Identity.Name)
                         .Where(p => p.Title.Contains(searchString))
                         .OrderByDescending(p => p.CreatedDate)
-                    select s;
+                        select s;
             }
             else
             {
@@ -64,7 +64,7 @@ namespace ForumApp.Controllers
                         .ThenInclude(t => t.User)
                         .Where(u => u.User.UserName == User.Identity.Name)
                         .OrderByDescending(p => p.CreatedDate)
-                    select s;
+                        select s;
             }
 
             ViewData["CurrentFilter"] = searchString;
@@ -211,6 +211,22 @@ namespace ForumApp.Controllers
             Category category = context.UserCategories.Where(u => u.User.UserName == User.Identity.Name).Include(p => p.UserPosts).Include(u => u.User).FirstOrDefault(c => c.Id == id);
 
             return View(category.UserPosts);
+        }
+
+        [HttpGet]
+        public IActionResult Settings(int? id)
+        {
+            Post post = context.UserPosts.FirstOrDefault(p => p.Id == id);
+            return View(post);
+        }
+
+        [HttpPost]
+        public IActionResult Settings(Post post)
+        {
+            Post dbPost = context.UserPosts.FirstOrDefault(p => p.Id == post.Id);
+            dbPost.IsPublic = post.IsPublic;
+            context.SaveChanges();
+            return View(dbPost);
         }
     }
 }
