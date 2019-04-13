@@ -18,7 +18,8 @@
                  {
                      <a asp-controller="PostComment" asp-action="ShowComments" asp-route-id="@post.Id" class="btn btn-default" style="margin-left: 20px">Show all comments </a>
                  }
-                 @Html.Partial("_CommentsList", post.Comments)
+
+                 @Html.ActionLink("Show comments", "ShowComments", "PostComment", post)
              </div>
          </div>
      }

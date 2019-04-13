@@ -92,10 +92,10 @@ namespace ForumApp.Controllers
         }
 
         [Route("/User/Index/PostComment/ShowComments")]
-        public IActionResult ShowComments(int id)
+        public IActionResult ShowComments(Post post)
         {
-            ViewData["Post"] = context.UserPosts.FirstOrDefault(p => p.Id == id);
-            return View(context.UserComments.Include(t => t.Author).Include(p => p.Post).Where(p => p.PostId == id).ToList());
+            ViewData["Post"] = context.UserPosts.FirstOrDefault(p => p.Id == post.Id);
+            return View(context.UserComments.Include(t => t.Author).Include(p => p.Post).Where(p => p.PostId == post.Id).ToList());
         }
     }
 }

@@ -16,15 +16,17 @@
 <div class="container">
     <div class="row">
         <div class="col-md-4">
-            <h4 class="">Search</h4>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
-                <div class="input-group-btn">
-                    <button class="btn btn-success" type="submit">
-                        <i class="glyphicon glyphicon-search"></i>
-                    </button>
+            <form method="get" asp-controller="User" asp-action="Index">
+                <h4 class="">Search</h4>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="searchString" id="srch-term">
+                    <div class="input-group-btn">
+                        <button class="btn btn-success" type="submit">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
             <button type="button" class="btn btn-default btn-sm btn-block hidden-lg hidden-md" data-toggle="collapse" data-target="#demo">
                 Refine your search <span class="caret"></span>
             </button>
@@ -53,7 +55,7 @@
                             <li class="list-group-item">
                                 <a class="btn btn-info" asp-controller="User" asp-action="Select" asp-route-id="@currentCategory.Id">@currentCategory.Title</a>
                                 <span class="pull-right button-group">
-                                    <span class="badge">2</span>
+                                    <span class="badge">@currentCategory.UserPosts.Count</span>
                                     <div class="modal fade" id="edit-category">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
@@ -72,7 +74,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <a asp-controller="UserCategory" asp-action="Edit" asp-route-id="@category.Id" type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit-category"><span class="glyphicon glyphicon-edit"></span></a>
                                     <a asp-controller="UserCategory" asp-action="Delete" asp-route-id="@category.Id" type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-category"><span class="glyphicon glyphicon-remove"></span></a>
                                 </span>

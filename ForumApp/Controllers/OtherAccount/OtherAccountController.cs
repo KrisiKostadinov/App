@@ -30,8 +30,9 @@ namespace ForumApp.Controllers
             if (searchUser != null)
             {
                 List<ApplicationUser> users =
-                    context.Users.Where(u => u.FirstName == searchUser || u.LastName == searchUser)
+                    context.Users.Where(u => u.FirstName == searchUser && u.UserName != User.Identity.Name || u.LastName == searchUser && u.UserName != User.Identity.Name)
                         .ToList();
+
                 return View(users);
             }
 
@@ -60,14 +61,32 @@ namespace ForumApp.Controllers
                 searchString = currentFilter;
             }
 
-            ViewData["CurrentFilter"] = searchString;
+            IQueryable<Post> posts = null;
 
-            var posts = from s in context.UserPosts
-                    .Include(t => t.User)
-                    .Include(c => c.Category)
-                    .ThenInclude(t => t.User)
-                    .Where(u => u.User.Id == id)
-                select s;
+            if (searchString != currentFilter)
+            {
+                posts = from s in context.UserPosts
+                        .Include(t => t.User)
+                        .Include(c => c.Category)
+                        .ThenInclude(t => t.User)
+                        .Where(u => u.User.Id == id)
+                        .Where(p => p.Title.Contains(searchString))
+                        .OrderByDescending(p => p.CreatedDate)
+                    select s;
+            }
+            else
+            {
+                posts = from s in context.UserPosts
+                        .Include(t => t.User)
+                        .Include(c => c.Comments)
+                        .Include(c => c.Category)
+                        .ThenInclude(t => t.User)
+                        .Where(u => u.User.Id == id)
+                        .OrderByDescending(p => p.CreatedDate)
+                    select s;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
 
             if (!String.IsNullOrEmpty(searchString))
             {

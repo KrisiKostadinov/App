@@ -2,7 +2,7 @@
 @model PaginatedList<Post>
 @using PagedList.Mvc;
 
-@foreach (var post in Model.OrderByDescending(p => p.CreatedDate))
+@foreach (var post in Model)
 {
     <div class="row" style="background-color: lightgrey; margin-top: 20px; border-radius: 25px">
         <div class="col-sm-12">
@@ -12,17 +12,23 @@
             <p class="text-muted">Presented by <a href="#">@post.User.FirstName @post.User.LastName</a></p>
             <a asp-controller="PostComment" asp-action="Create" asp-route-id="@post.Id" class="btn btn-primary btn-sm">Add comment</a>
 
-            @if (post.CommentCount > 0)
+            @if (post.CommentCount > 1)
             {
-                <a asp-controller="PostComment" asp-action="ShowComments" asp-route-id="@post.Id" class="btn btn-default" style="margin-left: 20px">Show all comments </a>
+                @Html.ActionLink($"Show comments {post.CommentCount}", "ShowComments", "PostComment", post)
+            }
+            @if (post.CommentCount == 1)
+            {
+                @Html.ActionLink($"Show comment {post.CommentCount}", "ShowComments", "PostComment", post)
+            }
+            @if (post.CommentCount <= 0)
+            {
+                <i>No comments</i>
             }
             @if (post.User.UserName == User.Identity.Name)
             {
-                <a asp-controller="User" asp-action="Edit" asp-route-id="@post.Id" class="btn btn-warning">Edit </a>
-                <a asp-controller="User" asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete </a>
+                <a asp-controller="User" asp-action="EditUserPost" asp-route-id="@post.Id" class="btn btn-warning">Edit </a>
+                <a asp-controller="User" asp-action="DeleteUserPost" asp-route-id="@post.Id" class="btn btn-danger">Delete </a>
             }
-
-            @Html.Partial("_CommentsList", post.Comments)
         </div>
     </div>
 }

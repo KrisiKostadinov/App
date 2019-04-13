@@ -9,8 +9,6 @@ using ForumApp.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Web;
-using PagedList;
 
 namespace ForumApp.Controllers
 {
@@ -36,6 +34,8 @@ namespace ForumApp.Controllers
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
 
+            IQueryable<Post> posts = null;
+
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -44,16 +44,30 @@ namespace ForumApp.Controllers
             {
                 searchString = currentFilter;
             }
+            if (searchString != currentFilter)
+            {
+                posts = from s in context.UserPosts
+                        .Include(t => t.User)
+                        .Include(c => c.Category)
+                        .ThenInclude(t => t.User)
+                        .Where(u => u.User.UserName == User.Identity.Name)
+                        .Where(p => p.Title.Contains(searchString))
+                        .OrderByDescending(p => p.CreatedDate)
+                    select s;
+            }
+            else
+            {
+                posts = from s in context.UserPosts
+                        .Include(t => t.User)
+                        .Include(c => c.Comments)
+                        .Include(c => c.Category)
+                        .ThenInclude(t => t.User)
+                        .Where(u => u.User.UserName == User.Identity.Name)
+                        .OrderByDescending(p => p.CreatedDate)
+                    select s;
+            }
 
             ViewData["CurrentFilter"] = searchString;
-
-            var posts = from s in context.UserPosts
-                    .Include(t => t.User)
-                    .Include(c => c.Category)
-                    .ThenInclude(t => t.User)
-                    .Where(u => u.User.UserName == User.Identity.Name)
-                select s;
-
             if (!String.IsNullOrEmpty(searchString))
             {
                 posts = posts.Where(s => s.Title.Contains(searchString));
@@ -67,7 +81,7 @@ namespace ForumApp.Controllers
 
             int pageSize = 3;
 
-            ViewData["Categories"] = context.UserCategories.Where(c => c.User.UserName == User.Identity.Name).ToList();
+            ViewData["Categories"] = context.UserCategories.Include(p => p.UserPosts).Where(c => c.User.UserName == User.Identity.Name).ToList();
 
             ViewData["User"] = context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
 
@@ -86,6 +100,18 @@ namespace ForumApp.Controllers
             Thread.Sleep(1000);
 
             return RedirectToAction("Index", "User");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult SearchPosts(string search)
+        {
+            if (search != "")
+            {
+                List<Post> posts = context.UserPosts.Where(p => p.Title.Contains(search)).ToList();
+            }
+
+            return null;
         }
 
         [Authorize]
@@ -124,14 +150,65 @@ namespace ForumApp.Controllers
 
         [Authorize]
         [HttpGet]
+        public IActionResult EditUserPost(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index", "User");
+            }
+
+            Post post = context.UserPosts.FirstOrDefault(p => p.Id == id);
+
+            return View(post);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult EditUserPost(Post post)
+        {
+            if (ModelState.IsValid)
+            {
+                Post dbPost = context.UserPosts.FirstOrDefault(p => p.Id == post.Id);
+                dbPost.Title = post.Title;
+
+                dbPost.Description = post.Description;
+                context.SaveChanges();
+            }
+            return RedirectToAction("Index", "User");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult DeleteUserPost(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index", "User");
+            }
+            Post post = context.UserPosts.FirstOrDefault(p => p.Id == id);
+
+            return View(post);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult DeleteUserPost(Post post)
+        {
+            context.UserPosts.Remove(post);
+            context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        [HttpGet]
         public IActionResult Select(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction("Index");
             }
-
-            Category category = context.UserCategories.Include(p => p.UserPosts).Include(u => u.User).FirstOrDefault(c => c.Id == id);
+            Category category = context.UserCategories.Where(u => u.User.UserName == User.Identity.Name).Include(p => p.UserPosts).Include(u => u.User).FirstOrDefault(c => c.Id == id);
 
             return View(category.UserPosts);
         }

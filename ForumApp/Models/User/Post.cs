@@ -19,6 +19,7 @@ namespace ForumApp.Models.User
         [Required]
         public string Description { get; set; }
 
+        [Display(Name = "Created Date")]
         public DateTime CreatedDate { get; set; }
 
         public int CategoryId { get; set; }

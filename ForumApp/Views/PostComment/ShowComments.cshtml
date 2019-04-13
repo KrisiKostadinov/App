@@ -1,16 +1,23 @@
 ﻿@using ForumApp.Models.User
-@model IEnumerable<Comment>
+@model List<Comment>
 @{
     Post post = (Post)ViewData["Post"];
 }
 
-<h2>All comments</h2>
+@if (Model.Count == 1)
+{
+    <h2>@Model.Count comment</h2>
+}
+else
+{
+    <h2>@Model.Count comments</h2>
+}
 
 @if (Model != null)
 {
     <table class="table">
         <tbody>
-            @foreach (var comment in Model.Reverse())
+            @foreach (var comment in Model)
             {
                 <tr>
                     <td>
@@ -18,7 +25,7 @@
                     </td>
                     <td>
                         @if (comment.Author.UserName == User.Identity.Name ||
-                          comment.AuthorIdFromCreated == User.Identity.Name)
+                         comment.AuthorIdFromCreated == User.Identity.Name)
                         {
                             <div class="btn btn-group">
                                 <a asp-controller="PostComment" asp-action="Edit" asp-route-id="@comment.Id" class="btn btn-warning">Edit</a>
@@ -32,4 +39,3 @@
     </table>
 }
 <a asp-controller="PostComment" asp-action="Create" asp-route-id="@post.Id" class="btn btn-primary btn-sm">Add comment</a>
-<a href="/User/Index" class="btn btn-danger btn-sm">Back</a>
