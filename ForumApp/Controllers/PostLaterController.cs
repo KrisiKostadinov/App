@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ForumApp.Data;
 using ForumApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -70,7 +71,6 @@ namespace ForumApp.Controllers
             PostLater postLater = context.PostLaters
                 .FirstOrDefault(p => p.PostId == id);
             context.Remove(postLater);
-
             context.SaveChanges();
 
             return RedirectToAction("All", "Post");

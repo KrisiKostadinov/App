@@ -153,6 +153,13 @@ namespace ShopProject.Controllers
             }
             ViewData["Posts"] = posts;
             List<Category> categories = context.Categories.ToList();
+            List<int> postsLater = context.PostLaters
+                .Include(t => t.Author)
+                .Where(p => p.Author.UserName == User.Identity.Name)
+                .Select(p => p.PostId)
+                .ToList();
+
+            ViewData["postsLater"] = postsLater;
 
             ViewData["Categories"] = categories;
             return View(category);
