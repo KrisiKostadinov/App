@@ -3,7 +3,7 @@
 <p>
     <a asp-controller="User" asp-action="CreateUserPost"  class="btn btn-primary">New post</a>
 </p>
-@if (Model.Count > 0)
+@if (Model != null && Model.Count > 0)
 {
     foreach (var post in Model.OrderByDescending(p => p.CreatedDate)) {
          <div class="row" style="background-color: lightgrey; margin-top: 20px; border-radius: 25px">

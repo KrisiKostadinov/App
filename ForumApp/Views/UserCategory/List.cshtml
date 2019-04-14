@@ -22,12 +22,19 @@
                     </div>
                 </div>
             </div>
-            @foreach (var category in Model.Reverse().Take(5))
+            @foreach (var category in Model.Take(5))
             {
                 <li class="list-group-item">
                     <a class="btn btn-info" asp-controller="User" asp-action="Select" asp-route-id="@category.Id">@category.Title</a>
                     <span class="pull-right button-group">
-                        <span class="badge">@category.UserPosts.Count</span>
+                        @if (category.User.UserName != User.Identity.Name)
+                        {
+                            <span class="badge">@category.UserPosts.Where(p => p.IsPublic).ToList().Count</span>
+                        }
+                        else
+                        {
+                            <span class="badge">@category.UserPosts.Count</span>
+                        }
                         @if (category.User.UserName == User.Identity.Name)
                         {
                             <a asp-controller="UserCategory" asp-action="Edit" asp-route-id="@category.Id" type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit-category"><span class="glyphicon glyphicon-edit"></span></a>

@@ -208,9 +208,19 @@ namespace ForumApp.Controllers
             {
                 return RedirectToAction("Index");
             }
-            Category category = context.UserCategories.Where(u => u.User.UserName == User.Identity.Name).Include(p => p.UserPosts).Include(u => u.User).FirstOrDefault(c => c.Id == id);
 
-            return View(category.UserPosts);
+            Category category = context.UserCategories.Include(p => p.UserPosts).Include(u => u.User).FirstOrDefault(c => c.Id == id);
+
+            if (category != null)
+            {
+                if (category.User.UserName == User.Identity.Name)
+                {
+                    return View(category.UserPosts);
+                }
+                return View(category.UserPosts.Where(p => p.IsPublic).ToList());
+            }
+
+            return View();
         }
 
         [HttpGet]

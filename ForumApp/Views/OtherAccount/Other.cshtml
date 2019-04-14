@@ -7,9 +7,6 @@
 }
 <div class="form-group">
     <h4 class="text-center">@user.FirstName @user.LastName</h4>
-    <div class="btn-group pull-right">
-        <a href="#" class="btn btn-success btn-sm">Settings</a>
-    </div>
 </div>
 
 <div class="container">
@@ -43,14 +40,10 @@
                     <div id="categories" class="collapse">
                         <div class="container">
                             <ul class="list-group" style="line-height: 30px; width: 360px;">
-                                <li class="list-group-item">
-                                    <span class="label label-default">admin</span>
-                                    <span class="pull-right button-group">
-                                        <span class="badge">2</span>
-                                        <a href="/admin/userA" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span></a>
-                                        <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
-                                    </span>
-                                </li>
+                                @foreach (var category in categories.Skip(6))
+                                {
+                                    <a class="btn btn-info" asp-controller="User" asp-action="Select" asp-route-id="@category.Id">@category.Title</a>
+                                }
                             </ul>
                         </div>
                     </div>
