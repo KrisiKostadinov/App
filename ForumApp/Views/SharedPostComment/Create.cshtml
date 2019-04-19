@@ -1,5 +1,5 @@
 ﻿@using ForumApp.Models.User
-@model Comment
+@model SharedPostComment
 
 @{
     ViewData["Title"] = "Create";
@@ -36,7 +36,7 @@
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-default" />
-                    <a href="/User/Index/PostComment/ShowComments?id=@ViewContext.RouteData.Values["id"]" class="btn btn-default">Back to Comment List</a>
+                    <a href="/User/Index/SharedPostComment/ShowComments?id=@ViewContext.RouteData.Values["id"]" class="btn btn-default">Back to Comment List</a>
                 </div>
             </form>
         </div>

@@ -3,51 +3,35 @@
 @{
     ViewData["Title"] = "AllForPost";
 }
-
-<div>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link href="~/css/custom.css" rel="stylesheet"/>
-    @if (Model.Count == 0 || Model == null)
-    {
-        <div style="color: red; text-align: center">
-            <h2>No comments!</h2>
-            <a asp-controller="Post" asp-action="AllPostsForLater" class="glyphicon glyphicon-share-alt btn btn-danger" style="-webkit-transform: scaleX(-1); transform: scaleX(-1); color: #fff"></a>
-        </div>
-    }
-    @foreach (var comment in Model)
-    {
-        <article class="forum-post post-item highlighted-post">
-            <div class="head-post table-holder">
-                <div class="post-content">
-                    <div>
-                        <p>@comment.Description</p>
-                    </div>
-                    <div class="meta-info table-holder meta-details">
-                        <div class="table-holder">
-                            <div class="row">
-                                <div class="cell" style="margin-left: 20px">
-                                    <span class="item-wrap date-wrap">
-                                        <i class="fa fa-calendar">Created at: </i>
-                                        <span class="post-date" title="Create at">
-                                            @comment.CreatedDate.ToString("HH:mm dd/MMM/yyyy")
-                                        </span>
-                                    </span>
-                                    <span class="item-wrap category-wrap">
-                                        <i class="fa fa-exchange">Last Redaction: </i>
-                                        <span class="date-time cell" title="Last Redaction">@comment.LastUpdatedDate.ToString("HH:mm dd/MMM/yyyy")</span>
-                                    </span>
-                                    <span class="item-wrap">
-                                        <i class="fa fa-calendar">Author: </i>
-                                        <span class="post-date" title="Author">
-                                            @comment.Author.FirstName
-                                        </span>
-                                    </span>
-                                </div>
+<body style="background-color: lightgrey">
+    <div>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="~/css/custom.css" rel="stylesheet" />
+        @if (Model.Count == 0 || Model == null)
+        {
+            <div style="color: red; text-align: center">
+                <h2>No comments!</h2>
+                <a asp-controller="Post" asp-action="AllPostsForLater" class="glyphicon glyphicon-share-alt btn btn-danger" style="-webkit-transform: scaleX(-1); transform: scaleX(-1); color: #fff"></a>
+            </div>
+        }
+        @foreach (var comment in Model)
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <div style="height: auto; border-radius: 6px; margin-top: 20px; color: #000000; background-color: #ffffff">
+                        <div style="margin-left: 20px; padding-top: 20px">
+                            <p>Author @comment.Author.FirstName @comment.Author.LastName</p>
+                            <hr>
+                            <p id="description" style="font-size: 20px">@comment.Description</p>
+                            <hr>
+                            <div style="display: flex">
+                                <p style="margin-left: 20px">Created on: @comment.CreatedDate</p>
+                                <p style="margin-left: 20px"> Last Updated on: @comment.LastUpdatedDate</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </article>
-    }
-</div>
+        }
+    </div>
+</body>

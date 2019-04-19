@@ -52,6 +52,8 @@ namespace ForumApp.Controllers
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
 
+            IQueryable<Post> posts = null;
+
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -61,32 +63,31 @@ namespace ForumApp.Controllers
                 searchString = currentFilter;
             }
 
-            IQueryable<Post> posts = null;
-
             if (searchString != currentFilter)
             {
                 posts = from s in context.UserPosts
                         .Include(t => t.User)
                         .Include(c => c.Category)
-                        .ThenInclude(t => t.User)
+                        .Include(c => c.Comments)
                         .Where(u => u.User.Id == id)
                         .Where(p => p.Title.Contains(searchString))
                         .Where(p => p.IsPublic)
                         .OrderByDescending(p => p.CreatedDate)
-                    select s;
+                        select s;
             }
             else
             {
                 posts = from s in context.UserPosts
                         .Include(t => t.User)
-                        .Include(c => c.Comments)
                         .Include(c => c.Category)
-                        .ThenInclude(t => t.User)
+                        .Include(c => c.Comments)
                         .Where(u => u.User.Id == id)
                         .Where(p => p.IsPublic)
                         .OrderByDescending(p => p.CreatedDate)
-                    select s;
+                        select s;
             }
+            List<SharedPost> sharedPosts = context.SharedPosts.Include(u => u.User).Include(c => c.SharedPostComments).Where(p => p.User.Id == id).OrderByDescending(d => d.SahredDate).ToList();
+            ViewData["SharedPosts"] = sharedPosts;
 
             ViewData["CurrentFilter"] = searchString;
 
@@ -100,11 +101,13 @@ namespace ForumApp.Controllers
                     posts = posts.OrderByDescending(s => s.Title);
                     break;
             }
+
             int pageSize = 3;
 
-            ViewData["Categories"] = context.UserCategories.Include(u => u.User).Include(p => p.UserPosts).Where(c => c.User.Id == id).ToList();
+            ViewData["Categories"] = context.UserCategories.Include(p => p.UserPosts).Where(c => c.User.UserName == User.Identity.Name).ToList();
 
-            ViewData["User"] = context.Users.FirstOrDefault(u => u.Id == id);
+            ViewData["User"] = context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+
             return View(await PaginatedList<Post>.CreateAsync(posts.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 

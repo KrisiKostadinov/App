@@ -12,7 +12,7 @@ namespace ForumApp.Models.User
             this.Comments = new List<Comment>();
         }
 
-        public int Id { get; set; }
+        public int? Id { get; set; }
         
         public string Title { get; set; }
 

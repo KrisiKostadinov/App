@@ -74,7 +74,7 @@ namespace ShopProject.Controllers
                 return Redirect("/Post/AllPostsForLater");
             }
 
-            List<Comment> comments = context.Posts.Include(c => c.Comments).Include(t => t.Author).Include(c => c.Category).FirstOrDefault(p => p.Id == id).Comments;
+            List<Comment> comments = context.Comments.Include(t => t.Author).Where(c => c.PostId == id).ToList();
 
             return View(comments);
         }

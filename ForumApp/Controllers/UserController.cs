@@ -24,7 +24,7 @@ namespace ForumApp.Controllers
         [Authorize]
         public async Task<IActionResult> Index
         (
-            int? id,
+            string id,
             string sortOrder,
             string currentFilter,
             string searchString,
@@ -67,7 +67,12 @@ namespace ForumApp.Controllers
                         select s;
             }
 
+            List<SharedPost> sharedPosts = context.SharedPosts.Include(c => c.SharedPostComments).Where(p => p.User.UserName == User.Identity.Name).OrderByDescending(d => d.SahredDate).ToList();
+
+            ViewData["SharedPosts"] = sharedPosts;
+
             ViewData["CurrentFilter"] = searchString;
+
             if (!String.IsNullOrEmpty(searchString))
             {
                 posts = posts.Where(s => s.Title.Contains(searchString));
@@ -96,7 +101,6 @@ namespace ForumApp.Controllers
             user.Country = country;
 
             context.SaveChanges();
-
             Thread.Sleep(1000);
 
             return RedirectToAction("Index", "User");
@@ -116,10 +120,11 @@ namespace ForumApp.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult CreateUserPost(int? id)
+        public IActionResult CreateUserPost()
         {
             List<Category> categories = context.UserCategories.Where(t => t.User.UserName == User.Identity.Name).ToList();
             ViewData["Categories"] = categories;
+
             return View();
         }
 
@@ -174,7 +179,8 @@ namespace ForumApp.Controllers
                 dbPost.Description = post.Description;
                 context.SaveChanges();
             }
-            return RedirectToAction("Index", "User");
+
+            return Redirect($"/User/Details/{post.Id}");
         }
 
         [Authorize]
@@ -238,5 +244,29 @@ namespace ForumApp.Controllers
             context.SaveChanges();
             return View(dbPost);
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Details(int? id, string success)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+            if (success != null)
+            {
+                ViewData["SuccessfullyAdd"] = "SuccessfullyAdd";
+            }
+
+            Post post = context.UserPosts.Include(c => c.Comments).Include(p => p.User).Include(p => p.Category).FirstOrDefault(p => p.Id == id);
+            ViewData["Post"] = context.UserPosts.FirstOrDefault(p => p.Id == id).Id;
+
+            return View(post);
+        }
+
+        //public IActionResult Shared(int? id, string success = "SuccessfullyAdd")
+        //{
+            
+        //}
     }
 }

@@ -94,7 +94,7 @@ namespace ForumApp.Controllers
         [Route("/User/Index/PostComment/ShowComments")]
         public IActionResult ShowComments(Post post)
         {
-            ViewData["Post"] = context.UserPosts.FirstOrDefault(p => p.Id == post.Id);
+            ViewData["Post"] = context.UserPosts.Include(p =>p.User).FirstOrDefault(p => p.Id == post.Id).Id;
             return View(context.UserComments.Include(t => t.Author).Include(p => p.Post).Where(p => p.PostId == post.Id).ToList());
         }
     }

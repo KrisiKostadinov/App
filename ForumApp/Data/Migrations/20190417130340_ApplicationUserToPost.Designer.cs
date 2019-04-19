@@ -11,9 +11,10 @@ using System;
 namespace ForumApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190417130340_ApplicationUserToPost")]
+    partial class ApplicationUserToPost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,6 +58,8 @@ namespace ForumApp.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<int?>("PostId");
+
                     b.Property<string>("SecurityStamp");
 
                     b.Property<string>("Town");
@@ -75,6 +78,8 @@ namespace ForumApp.Data.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -139,7 +144,7 @@ namespace ForumApp.Data.Migrations
 
             modelBuilder.Entity("ForumApp.Models.User.Post", b =>
                 {
-                    b.Property<int?>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("CategoryId");
@@ -164,60 +169,6 @@ namespace ForumApp.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserPosts");
-                });
-
-            modelBuilder.Entity("ForumApp.Models.User.SharedPost", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("CategoryId");
-
-                    b.Property<string>("Description")
-                        .IsRequired();
-
-                    b.Property<DateTime>("LastUpdatedDate");
-
-                    b.Property<int?>("PostId");
-
-                    b.Property<DateTime>("SahredDate");
-
-                    b.Property<string>("Title");
-
-                    b.Property<string>("UserId");
-
-                    b.Property<int>("UserPostId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SharedPosts");
-                });
-
-            modelBuilder.Entity("ForumApp.Models.User.SharedPostComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description")
-                        .IsRequired();
-
-                    b.Property<int>("SharedPostId");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SharedPostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SharedPostComments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -423,6 +374,13 @@ namespace ForumApp.Data.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("ForumApp.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("ForumApp.Models.User.Post", "Post")
+                        .WithMany("SharedUsers")
+                        .HasForeignKey("PostId");
+                });
+
             modelBuilder.Entity("ForumApp.Models.PostLater", b =>
                 {
                     b.HasOne("ForumApp.Models.ApplicationUser", "Author")
@@ -463,34 +421,6 @@ namespace ForumApp.Data.Migrations
 
                     b.HasOne("ForumApp.Models.ApplicationUser", "User")
                         .WithMany("UserPosts")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("ForumApp.Models.User.SharedPost", b =>
-                {
-                    b.HasOne("ForumApp.Models.User.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ForumApp.Models.User.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId");
-
-                    b.HasOne("ForumApp.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("ForumApp.Models.User.SharedPostComment", b =>
-                {
-                    b.HasOne("ForumApp.Models.User.SharedPost", "SharedPost")
-                        .WithMany("SharedPostComments")
-                        .HasForeignKey("SharedPostId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ForumApp.Models.ApplicationUser", "User")
-                        .WithMany()
                         .HasForeignKey("UserId");
                 });
 

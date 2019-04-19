@@ -4,11 +4,13 @@
     ViewData["Title"] = "Index";
     List<Category> categories = (List<Category>)ViewData["Categories"];
     ApplicationUser user = (ApplicationUser)ViewData["User"];
+    List<SharedPost> sharedPosts = (List<SharedPost>) ViewData["SharedPosts"];
 }
 <div class="form-group">
     <h4 class="text-center">@user.FirstName @user.LastName</h4>
 </div>
 
+<body style="background-color: lightgrey">
 <div class="container">
     <div class="row">
         <div class="col-md-4">
@@ -60,8 +62,8 @@
         </form>
         <hr>
         <div class="col-md-7">
+            @Html.Partial("/Views/User/SharedPostsList.cshtml", sharedPosts)
             @Html.Partial("/Views/User/ListPosts.cshtml", Model)
-
             <hr>
             @{
                 var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
@@ -86,7 +88,7 @@
         </div>
     </div>
 </div>
-
+</body>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

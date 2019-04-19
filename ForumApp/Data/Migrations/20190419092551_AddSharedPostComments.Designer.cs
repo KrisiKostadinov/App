@@ -11,9 +11,10 @@ using System;
 namespace ForumApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190419092551_AddSharedPostComments")]
+    partial class AddSharedPostComments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,21 +179,15 @@ namespace ForumApp.Data.Migrations
 
                     b.Property<DateTime>("LastUpdatedDate");
 
-                    b.Property<int?>("PostId");
-
                     b.Property<DateTime>("SahredDate");
 
                     b.Property<string>("Title");
 
                     b.Property<string>("UserId");
 
-                    b.Property<int>("UserPostId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("PostId");
 
                     b.HasIndex("UserId");
 
@@ -472,10 +467,6 @@ namespace ForumApp.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ForumApp.Models.User.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId");
 
                     b.HasOne("ForumApp.Models.ApplicationUser", "User")
                         .WithMany()

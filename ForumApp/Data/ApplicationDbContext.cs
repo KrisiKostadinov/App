@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ForumApp.Models;
+using ForumApp.Models.User;
 using ShopProject.Models;
+using Category = ShopProject.Models.Category;
+using Comment = ShopProject.Models.Comment;
+using Post = ShopProject.Models.Post;
 
 namespace ForumApp.Data
 {
@@ -27,6 +31,10 @@ namespace ForumApp.Data
         public DbSet<Models.User.Comment> UserComments { get; set; }
 
         public DbSet<Models.User.Category> UserCategories { get; set; }
+
+        public DbSet<SharedPost> SharedPosts { get; set; }
+
+        public DbSet<SharedPostComment> SharedPostComments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

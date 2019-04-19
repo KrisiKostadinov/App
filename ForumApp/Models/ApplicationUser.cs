@@ -9,9 +9,9 @@ namespace ForumApp.Models
     {
         public ApplicationUser()
         {
-            this.UserPosts = new List<Post>();
-
             this.UserComments = new List<Comment>();
+
+            this.UserPosts = new List<Post>();
         }
 
         public string FirstName { get; set; }
@@ -21,9 +21,9 @@ namespace ForumApp.Models
         public string Country { get; set; }
 
         public string Town { get; set; }
+        
+        public List<Comment> UserComments { get; set; }
 
         public List<Post> UserPosts { get; set; }
-
-        public List<Comment> UserComments { get; set; }
     }
 }

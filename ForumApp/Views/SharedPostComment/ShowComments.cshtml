@@ -1,8 +1,5 @@
 ﻿@using ForumApp.Models.User
-@model List<Comment>
-@{
-    int post = (int)ViewData["Post"];
-}
+@model List<SharedPostComment>
 
 <body style="background-color: lightgrey">
     @if (Model.Count == 1)
@@ -24,13 +21,12 @@
                         <div class="col-lg-12">
                             <div style="height: auto; border-radius: 6px; margin-top: 20px; color: #000000; background-color: #ffffff">
                                 <div style="margin-left: 20px; padding-top: 20px">
-                                    <p>Author @comment.Author.FirstName @comment.Author.LastName</p>
+                                    <p>Author @comment.User.FirstName @comment.User.LastName</p>
                                     <hr>
                                     <p id="description" style="font-size: 20px">@comment.Description</p>
                                     <hr>
                                     <div style="display: flex">
-                                        @if (comment.Author.UserName == User.Identity.Name ||
-                                       comment.AuthorIdFromCreated == User.Identity.Name)
+                                        @if (comment.User.UserName == User.Identity.Name)
                                         {
                                             <div class="btn btn-group">
                                                 <a asp-controller="PostComment" asp-action="Edit" asp-route-id="@comment.Id" class="btn btn-warning">Edit</a>
@@ -46,7 +42,12 @@
             </tbody>
         </table>
     }
+    
 <hr>
-<a asp-controller="PostComment" asp-action="Create" asp-route-id="@post" class="btn btn-primary btn-sm">Add comment</a>
-<a asp-controller="User" asp-action="Details" asp-route-id="@post" class="btn btn-primary btn-sm">Show post</a>
+@if (ViewData["SharedPost"] != null)
+    {
+        int sharedPost = (int)ViewData["SharedPost"];
+        <a asp-controller="SharedPostComment" asp-action="Create" asp-route-id="@sharedPost" class="btn btn-primary btn-sm">Add comment</a>
+        <a asp-controller="SharedPost" asp-action="Details" asp-route-id="@sharedPost" class="btn btn-primary btn-sm">Show post</a>
+    }
 </body>

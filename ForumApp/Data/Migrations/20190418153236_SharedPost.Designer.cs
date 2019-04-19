@@ -11,9 +11,10 @@ using System;
 namespace ForumApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190418153236_SharedPost")]
+    partial class SharedPost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,11 +129,15 @@ namespace ForumApp.Data.Migrations
 
                     b.Property<int>("PostId");
 
+                    b.Property<int?>("SharedPostId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
                     b.HasIndex("PostId");
+
+                    b.HasIndex("SharedPostId");
 
                     b.ToTable("UserComments");
                 });
@@ -178,46 +183,19 @@ namespace ForumApp.Data.Migrations
 
                     b.Property<DateTime>("LastUpdatedDate");
 
-                    b.Property<int?>("PostId");
-
                     b.Property<DateTime>("SahredDate");
 
                     b.Property<string>("Title");
 
                     b.Property<string>("UserId");
 
-                    b.Property<int>("UserPostId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("PostId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("SharedPosts");
-                });
-
-            modelBuilder.Entity("ForumApp.Models.User.SharedPostComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description")
-                        .IsRequired();
-
-                    b.Property<int>("SharedPostId");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SharedPostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SharedPostComments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -452,6 +430,10 @@ namespace ForumApp.Data.Migrations
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ForumApp.Models.User.SharedPost")
+                        .WithMany("Comments")
+                        .HasForeignKey("SharedPostId");
                 });
 
             modelBuilder.Entity("ForumApp.Models.User.Post", b =>
@@ -462,7 +444,7 @@ namespace ForumApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ForumApp.Models.ApplicationUser", "User")
-                        .WithMany("UserPosts")
+                        .WithMany()
                         .HasForeignKey("UserId");
                 });
 
@@ -471,22 +453,6 @@ namespace ForumApp.Data.Migrations
                     b.HasOne("ForumApp.Models.User.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ForumApp.Models.User.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId");
-
-                    b.HasOne("ForumApp.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("ForumApp.Models.User.SharedPostComment", b =>
-                {
-                    b.HasOne("ForumApp.Models.User.SharedPost", "SharedPost")
-                        .WithMany("SharedPostComments")
-                        .HasForeignKey("SharedPostId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ForumApp.Models.ApplicationUser", "User")

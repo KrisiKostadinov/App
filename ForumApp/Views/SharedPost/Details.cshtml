@@ -1,0 +1,83 @@
+﻿@model ForumApp.Models.User.SharedPost
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<body style="background-color: lightgrey">
+
+    @if (ViewData["SuccessfullyAdd"] != null)
+    {
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+        <div class="container">
+            <div class="alert alert-success alert-dismissible fade in">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Success!</strong> You successfully add the post to your account
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-lg-12">
+            <div style="height: auto; border-radius: 6px; margin-top: 20px; color: #000000; background-color: #ffffff">
+                <h2 style="text-align: center; padding-top: 10px">@Model.Title</h2>
+                <div style="margin-left: 20px">
+                    <hr>
+                    <p>Author @Model.User.FirstName @Model.User.LastName</p>
+                    <hr>
+                    <p style="font-size: 20px">@Model.Description</p>
+                    <hr>
+                    <div style="display: flex">
+                        <p style="margin-top: 10px; margin-left: 10px">Published on: @Model.SahredDate</p>
+                        <p style="margin-top: 10px; margin-left: 10px">Last Updated on: @Model.LastUpdatedDate</p>
+                        <p style="margin-top: 10px; margin-left: 10px">Category: @Model.Category.Title</p>
+                    </div>
+
+                    <hr>
+                    <div style="padding-bottom: 20px">
+                        @if (Model.User.UserName == User.Identity.Name)
+                        {
+                            <a asp-controller="SharedPost" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-controller="User" asp-action="DeleteUserPost" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">Delete</a>
+                        }
+
+                        <a href="/User/Index" class="btn btn-danger btn-sm">My account</a>
+                        <a asp-controller="SharedPostComment" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">Add comment</a>
+
+                        @if (Model.SharedPostCommentCount > 0)
+                        {
+                            <button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#show-comments">Show comments</button>
+                        }
+
+                        @if (Model.User.UserName != User.Identity.Name)
+                        {
+                            <a href="#shared-user" class="btn btn-primary btn-sm" data-toggle="modal">Share post</a>
+                        }
+                        
+                        <a asp-controller="OtherAccount" asp-action="Other" asp-route-id="@Model.User.Id" class="btn btn-danger btn-sm">Back to List</a>
+
+                        <div id="show-comments" class="collapse">
+                            @Html.Partial("/Views/SharedPostComment/ShowComments.cshtml", Model.SharedPostComments)
+                        </div>
+                        <div class="modal fade" id="shared-user">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        <h3 class="modal-title">Share post - @Model.Title</h3>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default " data-dismiss="modal">Close</button>
+                                        <a asp-controller="SharedPost" asp-action="Create" asp-route-id="@Model.UserPostId" class="btn btn-primary btn-sm">Share post</a>
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
